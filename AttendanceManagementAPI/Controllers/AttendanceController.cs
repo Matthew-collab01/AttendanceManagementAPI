@@ -26,6 +26,7 @@ namespace AttendanceManagementAPI.Controllers
         public ActionResult<attModels> GetAttendance(Guid ident)
         {
             var record = _appService.GetAttendance(ident);
+            
             if (record == null)
                 return NotFound($"No record found for id: {ident}");
 
@@ -35,13 +36,13 @@ namespace AttendanceManagementAPI.Controllers
         [HttpPost]
         public IActionResult CreateAttendance([FromBody] Models.AttendanceRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.studname))
+            if (request == null || string.IsNullOrWhiteSpace(request.name))
                 return BadRequest("Student name is required.");
 
             _appService.AddStudent(
-                request.studname, 
-                request.Present, 
-                request.Absent
+                request.name, 
+                request.present, 
+                request.absent
                 );
 
             return Ok("Student attendance record created.");
@@ -50,14 +51,14 @@ namespace AttendanceManagementAPI.Controllers
         [HttpPatch("{ident:guid}")]
         public IActionResult UpdateAttendance(Guid ident, [FromBody] Models.AttendanceRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.studname))
+            if (request == null || string.IsNullOrWhiteSpace(request.name))
                 return BadRequest("Student name is required.");
 
             var success = _appService.UpdateStudentById(
                 ident, 
-                request.studname, 
-                request.Present, 
-                request.Absent
+                request.name, 
+                request.present, 
+                request.absent
                 );
 
             if (!success)
