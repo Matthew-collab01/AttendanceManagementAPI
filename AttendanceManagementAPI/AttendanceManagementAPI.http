@@ -1,0 +1,6 @@
+@AttendanceManagementAPI_HostAddress = http://localhost:5118
+
+GET {{AttendanceManagementAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
