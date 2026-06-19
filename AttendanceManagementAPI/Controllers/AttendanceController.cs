@@ -1,6 +1,9 @@
 ﻿using attedanceModels;
 using attendanceAppService;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Dynamic;
+using System.Security.Principal;
 
 namespace AttendanceManagementAPI.Controllers
 {
@@ -36,8 +39,19 @@ namespace AttendanceManagementAPI.Controllers
         [HttpPost]
         public IActionResult CreateAttendance([FromBody] Models.AttendanceRequest request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.name))
+            if (request == null)
+            {
                 return BadRequest("Student name is required.");
+            }
+
+            var att = new attedanceModels.attModels
+            {
+                ident = Guid.NewGuid(),
+                studname = request.name,
+                Present = request.present,
+                Absent = request.absent,
+
+            };
 
             _appService.AddStudent(
                 request.name, 
@@ -45,9 +59,12 @@ namespace AttendanceManagementAPI.Controllers
                 request.absent
                 );
 
-            return Ok("Student attendance record created.");
+            return CreatedAtAction(
+                nameof(GetAttendance),
+                new { ident = att.ident },
+                att);
         }
-
+        
         [HttpPatch("{ident:guid}")]
         public IActionResult UpdateAttendance(Guid ident, [FromBody] Models.AttendanceRequest request)
         {
